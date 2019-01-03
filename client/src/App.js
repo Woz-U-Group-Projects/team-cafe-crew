@@ -19,23 +19,24 @@ class RecipeList extends React.Component {
   }; 
 }
 viewAllRecipes = () => {
+
   fetch("/api/viewAllRecipes")
       .then(data => data.json())
       .then(res => this.setState({ data: res.data }))
       
   }
-
   setRecipeRating () {
-
-      
-   
       this.setState({recipeRating: this.state.recipeRating });
-      this.setState({recipeId: this.state.recipeId});
-      this.setState({recipeName: this.state.recipeName});
-      let theRating=this.state.recipeRating;
-      let theID=this.state.recipeId;
-      let theName=this.state.recipeName;
-
+     this.setState({recipeId: this.state.RecipeId});
+     this.setState({recipeName: this.state.recipeName});
+     let theRating=this.state.recipeRating;
+    let theID=this.state.recipeId;
+     let theName=this.state.recipeName;
+   if (theID===0 || theID===undefined || theName==='' || theName===undefined)
+   {
+     alert("PLEASE CLICK ON THE RECIPE ID AND RECIPE NAME FIELDS BEFORE SUBMITTING RATING");
+     return;
+   }
       Axios.post("api/submitRatingToDB",
       {
         recipeRating: theRating,
@@ -45,63 +46,20 @@ viewAllRecipes = () => {
    
     
     ) 
-       console.log("RATING: " + theRating + " ID: " + theID + " NAME: " + theName);
+
       //this.setState({RatingsObject: {ratingsID: ratings.length + 1, theRecipeID:  this.state.RecipeID, rater: this.state.RatedBy, ratingNumber: theRating } });
       this.setState (this);
      // ratings.unshift(this.state.RatingsObject);
       alert("Your rating successfully submitted.");
+      theID=0;
+      theName="";
+      this.setState({recipeRating: 0});
+      this.setState(this);
   }
- // .catch((error) => {
-  //  console.log(error)
-  //});
 
-/* 
-viewAllRecipes = () => {
-    console.log('Out data are fetched');
-    fetch("/api/viewAllRecipes")
-
-  .then(res => {
-    console.log(res);
-    return res;
- })
-
-.then(data => { 
-    console.log(data); 
-    this.setState({ data })
- });
-                <h1>Users</h1>
-                {this.state.users.map(user =>
-                <div key={user.id}>user: {user.name} Password: {user.password}</div>
-              )}
-}
-*/
-
-
-/*
-componentDidMount() {
-  this.viewAllRecipes();
-  fetch('/api/viewAllRecipes') 
-  .then(response => response.json())
-      .then(data => this.setState({ data }))
-     .then( data => console.log(data))
-     
-  }
-*/
-/*
- componentDidMount(){
-   this.viewAllRecipes();
-   if (!this.state.intervalIsSet) {
-    let interval = setInterval(this.getDataFromDb, 1000);
-    this.setState({ intervalIsSet: interval });
-  }
-   
- }
-
- 
-
-  */
 
  componentDidMount() {
+   this.viewAllRecipes();
   if (!this.state.intervalIsSet) {
     let interval = setInterval(this.viewAllRecipes, 1000);
     this.setState({ intervalIsSet: interval });
@@ -128,15 +86,15 @@ componentDidMount() {
        <ul>
          <h2>{ idCount= data.length} recipes:</h2>
           {data.length <= 0
-            ? "NO DB ENTRIES YET"
+            ? "NO RECIPE DATA"
             : data.map(dat => (
                 <li style={{ padding: "10px" }} key={data.recipeInstructions} > 
-                  <span> <b>Recipe ID:</b> </span> <input type="number" value= {dat.recipeId} style={{width: '30px'}} readonly  onClick={event => this.setState({ recipeId: event.target.value })}/> <b>Enter a rating:</b> <input type="number" min="1" max="5" onChange={event => this.setState({ recipeRating: event.target.value })} /><button onClick={this.setRecipeRating.bind(this)}>SUBMIT RATING</button><br />
-                  <span> <b> User:</b> </span> {dat.recipeUser} <br />
-                  <span > <b> Category:</b> </span>{dat.recipeCategory} <br />
-                  <span > <b> Recipe Name: </b></span> <input value= {dat.recipeName} onClick={event => this.setState({ recipeName: event.target.value })}/> <br />
+                    <span> <b> User:</b> </span> {dat.recipeUser} <br />
+                  <span > <b> Category:</b> </span>{dat.recipeCategory} <br />              
+                  <span > <b>Recipe ID:</b> </span> <input   id="theRecipeId"  type="number" value = {dat.recipeId}  style={{width: '30px'}} readonly   onClick ={event => this.setState({ recipeId: event.target.value })}/><b> Recipe Name: </b> <input id="theRecipeName"   value= {dat.recipeName} onClick={event => this.setState({ recipeName: event.target.value })}/> <br />
+                 <span> <b>Enter a rating:</b> </span><input type="number" min="1" max="5" onChange={(event) => {this.setState({ recipeRating: event.target.value })} } /><button id="idName" onClick={this.setRecipeRating.bind(this)}>SUBMIT RATING</button>(click on Recipe Id and Recipe Name fields before submitting)   <br />             
                   <span > <b> Instructions:</b> </span><textarea rows="8" cols="35">{dat.recipeInstructions}</textarea> <b> Illustration:</b> <img src={dat.recipePicture} width="130" height="100" style={{paddingRight: "20"}}  alt={dat.recipeName} />               
-                  
+                
                 </li>
               ))}
         </ul>
@@ -168,12 +126,13 @@ const AppNav = () => (
   <div  >
     <ul >
    <li><Link to="/">Home</Link></li>
-   <li><Link to="/RecipeData">AddNewRecipe</Link></li>
+   <li><Link to="/RecipeData">Add New Recipe</Link></li>
+   <li><Link to="/ViewRatings">View Ratings</Link></li>
   
     </ul>
    <Route exact path="/" component={Home} />
     <Route path="/RecipeData" component={RecipeData} />
- 
+    <Route path="/ViewRatings" component={ViewRatings} />
    </div>
 
   </Router>
@@ -198,6 +157,97 @@ const fetchNewRecipes = () => {
   
     };
 */
+
+class ViewRatings extends React.Component {
+  constructor (props){
+  super (props);
+  this.state = {
+    recipeID: 0,
+    recipeName: '',
+    recipeRating: 0, 
+    data: []
+  };
+  }
+  
+  getRatings = () => {
+    this.setState({recipeID: this.state.recipeID});
+    let theID=this.state.recipeID;
+    fetch("/api/viewRatingsByIdNo/recipeId/" + theID)
+    .then(data =>  data.json())
+  .then((res) => this.setState({ data: res.data }));
+  }
+
+  getRatingsByRecipeName = () => {
+    this.setState({recipeName: this.state.recipeName});
+    let theName=this.state.recipeName;
+  fetch("/api/viewRatingsByRecipeName/recipeName/" + theName  )
+      .then(data =>  data.json())
+ //  .then(res => res.text())          // convert to plain text
+  // .then(text => console.log(text));  // then log it out
+   .then((res) => this.setState({ data: res.data }));
+  }
+
+  /*
+  componentDidMount() {
+    this.getRatings();
+    if (!this.state.intervalIsSet)
+      {
+       let  interval = setInterval(this.getRatings, 1000);
+      this.setState({ intervalIsSet: interval }); 
+     }
+   this.getRatingsByRecipeName();
+   if (!this.state.intervalIsSet)
+     {
+      let  interval = setInterval(this.getRatingsByRecipeName, 1000);
+     this.setState({ intervalIsSet: interval }); 
+    }
+ 
+ }
+ */
+ 
+
+
+   render () {
+    
+   const { data } = this.state;
+ return (
+   <div>
+   SERCH BY ID: <input type="number" onChange={event => this.setState({ recipeID: event.target.value })} value={this.state.recipeID} /><button onClick={this.getRatings.bind(this)}>SEARCH BY RECPIE ID</button>
+   SEARCH BY RECIPE NAME: <input type="text"  onChange={event => this.setState({ recipeName: event.target.value })} value={this.state.recipeName} /><button onClick={this.getRatingsByRecipeName.bind(this)}>SEARCH BY RECIPE NAME</button>
+   {data.length <= 0
+   ? '' :
+   <div style={{height: '300px', width:'900px', border:'1px solid #ccc', font:'16px/26px Georgia, Garamond, Serif', overflow:'auto' }}>
+     <h2>LIST OF RECIPE RATINGS</h2>
+     <ul> 
+  
+        { data.map(dat => (
+              <li key={data.recipeName} >  
+          <b><u> RECIPE ID: </u></b>{dat.recipeId}< br/><b><u> RECIPE NAME:</u></b>{dat.recipeName}<b><u> RATED:</u></b> {dat.recipeRating}
+                  </li>
+               
+            )) }
+
+      </ul>
+      </div>
+    }
+</div>
+ );
+    
+}
+}
+/*
+  return (
+      <div>
+      
+      RECIPE ID: <input type="text" onChange={event => this.setState({ RecipeId: event.target.value })} />
+      RECIPE NAME: <input type="text" onChange={event => this.setState({ RecipeName: event.target.value })} /> 
+      <button onClick={this.getRatings.bind(this)} >VIEW RATINGS</button>
+      {this.listRatings}
+      </div>)
+*/
+
+
+
 class RecipeData extends React.Component {
   constructor (props) {
     super(props);
@@ -335,7 +385,6 @@ setRecipeRating () {
       <div>
   
         <h2>Add New Recipe</h2>
-   
         <table>
       <tr>
       <td>  UserName: </td> <td><input type="text" onChange={event => this.setState({ RecipeUserName: event.target.value })} id="userName" value={this.state.RecipeUserName}  /> </td>
@@ -358,7 +407,6 @@ setRecipeRating () {
       <tr>
       <td>&nbsp; </td> <td><button id="updateButton" onClick={this.updateRecipeList.bind(this)} style={{visibility: 'hidden'}}>REFRESH RECIPE LIST </button></td>
       </tr>   
-           
         </table>
      
        {this.listItems()}

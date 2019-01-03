@@ -72,6 +72,27 @@ router.get("/viewAllRecipes", (req, res) => {
   */
 
  mongoose.connect(dbRoute, {useNewUrlParser: true});
+ router.get("/viewRatingsByIdNo/recipeId/:recipeId",  (req, res) =>  {
+  RatingsData.find({recipeId: req.params.recipeId }, (err,data) => { // 
+    if (err) return res.json({ success: false, error: err });
+    console.log(data);
+   
+    res.json({ success: true, data: data });
+  });
+  
+ });
+ //{"$regex": recipeId, "$options": "i" } 
+ router.get("/viewRatingsByRecipeName/recipeName/:recipeName", (req, res) => {
+   RatingsData.find({recipeName: new RegExp(req.params.recipeName,"i")},  (err,data) => { 
+ // RatingsData.find({recipeName: req.params.recipeName},  (err,data) => { 
+    if (err) return res.json({ success: false, error: err });
+    console.log(data);
+    res.json({ success: true, data: data });
+  });
+
+ 
+ });
+
  router.get("/viewAllRecipes", (req, res) => {
    /*
   mongoose.connect(
