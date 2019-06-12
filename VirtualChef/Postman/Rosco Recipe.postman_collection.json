@@ -1,0 +1,106 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Rosco Recipe",
+		"_postman_id": "ada2c696-0930-eeab-e799-e6c168d5508f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Recipes",
+			"request": {
+				"url": "http://localhost:8080/recipes/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create Recipe",
+			"request": {
+				"url": "http://localhost:8080/recipes/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"recipeName\": \"jeff\",\n  \"recipeIngrediants\": \"blah\",\n  \"servings\": 2\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update Recipe",
+			"request": {
+				"url": "http://localhost:8080/recipes/5c0ffbd0261daa53eccb6968",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"recipeName\": \"bill\",\n  \"recipeIngrediants\": \"blah\",\n  \"servings\": 2\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get By ID",
+			"request": {
+				"url": "http://localhost:8080/recipes/5c0ffbd0261daa53eccb6968",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get By Name",
+			"request": {
+				"url": "http://localhost:8080/recipes/name/jeff",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete By ID",
+			"request": {
+				"url": "http://localhost:8080/recipes/5c0ffbd0261daa53eccb6968",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete All",
+			"request": {
+				"url": "http://localhost:8080/recipes/deleteAll",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
